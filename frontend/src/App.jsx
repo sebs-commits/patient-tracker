@@ -3,6 +3,7 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AddPatients from "./pages/addPatients";
 import NavBar from "../components/NavBar";
+import PatientList from "./pages/PatientList";
 
 function App() {
   return (
@@ -11,8 +12,7 @@ function App() {
         <NavBar></NavBar>
         <Routes>
           <Route path="/add-patient" element={<AddPatients />} />
-
-          {/* Add more routes as needed */}
+          <Route path="/patients" element={<PatientList />} />
         </Routes>
       </div>
     </Router>
