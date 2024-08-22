@@ -21,7 +21,20 @@ const getPatients = async (req, res) => {
   }
 };
 
-// Update patient details
+// Get a patient by ID
+const getPatientById = async (req, res) => {
+  try {
+    const patient = await Patient.findById(req.params.id);
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+    res.status(200).json(patient);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Update a patient by ID
 const updatePatient = async (req, res) => {
   try {
     const updatedPatient = await Patient.findByIdAndUpdate(
@@ -29,17 +42,23 @@ const updatePatient = async (req, res) => {
       req.body,
       { new: true }
     );
+    if (!updatedPatient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
     res.status(200).json(updatedPatient);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-// Delete a patient
+// Delete a patient by ID
 const deletePatient = async (req, res) => {
   try {
-    await Patient.findByIdAndDelete(req.params.id);
-    res.status(204).json({ message: "Patient removed" });
+    const deletedPatient = await Patient.findByIdAndDelete(req.params.id);
+    if (!deletedPatient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+    res.status(204).json({ message: "Patient deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -48,6 +67,7 @@ const deletePatient = async (req, res) => {
 module.exports = {
   addPatient,
   getPatients,
+  getPatientById,
   updatePatient,
   deletePatient,
 };
