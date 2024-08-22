@@ -2,7 +2,7 @@ import { useState } from "react";
 import { addPatient } from "../api/patients";
 import { useNavigate } from "react-router-dom";
 
-const AddPatient = () => {
+const AddPatients = () => {
   const [newPatient, setNewPatient] = useState({
     name: "",
     unit: "",
@@ -68,4 +68,4 @@ const AddPatient = () => {
   );
 };
 
-export default AddPatient;
+export default AddPatients;
