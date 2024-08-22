@@ -3,10 +3,14 @@ import axios from "axios";
 // Fetch all patients
 export const fetchAllPatients = async () => {
   try {
-    const response = await axios.get("/api/patients");
+    const response = await axios.get("/api/patients", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token if required
+      },
+    });
     return response.data;
   } catch (error) {
-    console.error("Error fetching patients:", error);
+    console.error("Error fetching patients:", error.response || error.message);
     throw error;
   }
 };
@@ -14,10 +18,14 @@ export const fetchAllPatients = async () => {
 // Fetch a single patient by ID
 export const fetchPatientById = async (id) => {
   try {
-    const response = await axios.get(`/api/patients/${id}`);
+    const response = await axios.get(`/api/patients/${id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token if required
+      },
+    });
     return response.data;
   } catch (error) {
-    console.error("Error fetching patient:", error);
+    console.error("Error fetching patient:", error.response || error.message);
     throw error;
   }
 };
@@ -25,23 +33,35 @@ export const fetchPatientById = async (id) => {
 // Add a new patient
 export const addPatient = async (patientData) => {
   try {
-    const response = await axios.post("/api/patients", patientData);
+    const response = await axios.post("/api/patients", patientData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token if required
+        "Content-Type": "application/json", // Ensure the content type is set
+      },
+    });
     return response.data;
   } catch (error) {
-    console.error("Error adding patient:", error);
+    console.error("Error adding patient:", error.response || error.message);
     throw error;
   }
 };
+
 // Add an appointment to a patient
 export const addAppointment = async (id, appointmentData) => {
   try {
     const response = await axios.put(
       `/api/patients/${id}/appointments`,
-      appointmentData
+      appointmentData,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token if required
+          "Content-Type": "application/json", // Ensure the content type is set
+        },
+      }
     );
     return response.data;
   } catch (error) {
-    console.error("Error adding appointment:", error);
+    console.error("Error adding appointment:", error.response || error.message);
     throw error;
   }
 };
@@ -49,20 +69,29 @@ export const addAppointment = async (id, appointmentData) => {
 // Update a patient
 export const updatePatient = async (id, updatedData) => {
   try {
-    const response = await axios.put(`/api/patients/${id}`, updatedData);
+    const response = await axios.put(`/api/patients/${id}`, updatedData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token if required
+        "Content-Type": "application/json", // Ensure the content type is set
+      },
+    });
     return response.data;
   } catch (error) {
-    console.error("Error updating patient:", error);
+    console.error("Error updating patient:", error.response || error.message);
     throw error;
   }
 };
 
-// Delete a patient (optional)
+// Delete a patient
 export const deletePatient = async (id) => {
   try {
-    await axios.delete(`/api/patients/${id}`);
+    await axios.delete(`/api/patients/${id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token if required
+      },
+    });
   } catch (error) {
-    console.error("Error deleting patient:", error);
+    console.error("Error deleting patient:", error.response || error.message);
     throw error;
   }
 };
