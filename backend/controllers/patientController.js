@@ -3,8 +3,18 @@ const Patient = require("../models/Patient");
 // Add a new patient
 const addPatient = async (req, res) => {
   try {
-    const newPatient = new Patient(req.body);
+    // Create a new patient without setting healthcareID
+    let newPatient = new Patient(req.body);
+
+    // Save the patient to generate the _id
     await newPatient.save();
+
+    // Update the healthcareID to match the generated _id
+    newPatient.healthcareID = newPatient._id;
+
+    // Save the patient again with the healthcareID set to _id
+    await newPatient.save();
+
     res.status(201).json(newPatient);
   } catch (error) {
     res.status(400).json({ message: error.message });

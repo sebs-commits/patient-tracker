@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const PatientSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  healthcareID: { type: String, required: true, unique: true },
+  healthcareID: { type: String, required: false, unique: true },
   unit: { type: String, required: true },
   room: { type: String, required: true },
   appointments: [
