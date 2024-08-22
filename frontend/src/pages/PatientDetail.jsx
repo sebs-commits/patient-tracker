@@ -1,11 +1,22 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { fetchPatientById, addAppointment } from "../api/patients";
+import {
+  fetchPatientById,
+  updatePatient,
+  addAppointment,
+} from "../api/patients";
 
 const PatientDetail = () => {
   const { id } = useParams();
   const [patient, setPatient] = useState(null);
-  const [appointment, setAppointment] = useState({
+  const [isEditing, setIsEditing] = useState(false);
+  const [editablePatient, setEditablePatient] = useState({
+    name: "",
+    unit: "",
+    room: "",
+    appointments: [],
+  });
+  const [newAppointment, setNewAppointment] = useState({
     date: "",
     time: "",
     type: "",
@@ -16,6 +27,7 @@ const PatientDetail = () => {
       try {
         const data = await fetchPatientById(id);
         setPatient(data);
+        setEditablePatient(data); // Initialize editablePatient with fetched data
       } catch (error) {
         console.error("Error fetching patient details:", error);
       }
@@ -24,19 +36,64 @@ const PatientDetail = () => {
     fetchPatient();
   }, [id]);
 
-  const handleAppointmentChange = (e) => {
-    setAppointment({
-      ...appointment,
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditablePatient(patient); // Revert changes by resetting to original patient data
+  };
+
+  const handleInputChange = (e) => {
+    setEditablePatient({
+      ...editablePatient,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleAppointmentSubmit = async (e) => {
+  const handleAppointmentChange = (index, e) => {
+    const updatedAppointments = [...editablePatient.appointments];
+    updatedAppointments[index][e.target.name] = e.target.value;
+    setEditablePatient({
+      ...editablePatient,
+      appointments: updatedAppointments,
+    });
+  };
+
+  const handleRemoveAppointment = (index) => {
+    const updatedAppointments = [...editablePatient.appointments];
+    updatedAppointments.splice(index, 1); // Remove the appointment at the specified index
+    setEditablePatient({
+      ...editablePatient,
+      appointments: updatedAppointments,
+    });
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      const updatedPatient = await updatePatient(id, editablePatient);
+      setPatient(updatedPatient);
+      setIsEditing(false); // Exit edit mode after saving changes
+    } catch (error) {
+      console.error("Error saving patient details:", error);
+    }
+  };
+
+  const handleNewAppointmentChange = (e) => {
+    setNewAppointment({
+      ...newAppointment,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleNewAppointmentSubmit = async (e) => {
     e.preventDefault();
     try {
-      const updatedPatient = await addAppointment(id, appointment);
-      setPatient(updatedPatient); // Update the patient with the new appointment
-      setAppointment({ date: "", time: "", type: "" }); // Reset the form
+      const updatedPatient = await addAppointment(id, newAppointment);
+      setPatient(updatedPatient);
+      setEditablePatient(updatedPatient);
+      setNewAppointment({ date: "", time: "", type: "" }); // Reset the form
     } catch (error) {
       console.error("Error adding appointment:", error);
     }
@@ -49,45 +106,114 @@ const PatientDetail = () => {
   return (
     <div className="patient-detail-page">
       <h2>Patient Details</h2>
-      <p>
-        <strong>Name:</strong> {patient.name}
-      </p>
-      <p>
-        <strong>Unit:</strong> {patient.unit}
-      </p>
-      <p>
-        <strong>Room:</strong> {patient.room}
-      </p>
-      <p>
-        <strong>Healthcare ID:</strong> {patient.healthcareID}
-      </p>
 
-      {/* List existing appointments */}
+      <div>
+        <p>
+          <strong>Name:</strong>
+          {isEditing ? (
+            <input
+              type="text"
+              name="name"
+              value={editablePatient.name}
+              onChange={handleInputChange}
+            />
+          ) : (
+            patient.name
+          )}
+        </p>
+
+        <p>
+          <strong>Unit:</strong>
+          {isEditing ? (
+            <input
+              type="text"
+              name="unit"
+              value={editablePatient.unit}
+              onChange={handleInputChange}
+            />
+          ) : (
+            patient.unit
+          )}
+        </p>
+
+        <p>
+          <strong>Room:</strong>
+          {isEditing ? (
+            <input
+              type="text"
+              name="room"
+              value={editablePatient.room}
+              onChange={handleInputChange}
+            />
+          ) : (
+            patient.room
+          )}
+        </p>
+
+        <p>
+          <strong>Healthcare ID:</strong> {patient.healthcareID}
+        </p>
+      </div>
+
+      {/* List existing appointments with edit capability */}
       <h3>Appointments</h3>
       <ul>
-        {patient.appointments && patient.appointments.length > 0 ? (
-          patient.appointments.map((appt, index) => (
-            <li key={index}>
-              {appt.type} on {new Date(appt.date).toLocaleDateString()} at{" "}
-              {appt.time}{" "}
-            </li>
-          ))
-        ) : (
-          <li>No appointments</li>
-        )}
+        {editablePatient.appointments.map((appt, index) => (
+          <li key={index}>
+            {isEditing ? (
+              <div>
+                <label>
+                  Type:
+                  <input
+                    type="text"
+                    name="type"
+                    value={appt.type}
+                    onChange={(e) => handleAppointmentChange(index, e)}
+                  />
+                </label>
+                <label>
+                  Date:
+                  <input
+                    type="date"
+                    name="date"
+                    value={appt.date.split("T")[0]} // Handle date format
+                    onChange={(e) => handleAppointmentChange(index, e)}
+                  />
+                </label>
+                <label>
+                  Time:
+                  <input
+                    type="time"
+                    name="time"
+                    value={appt.time}
+                    onChange={(e) => handleAppointmentChange(index, e)}
+                  />
+                </label>
+                <button onClick={() => handleRemoveAppointment(index)}>
+                  Remove
+                </button>
+              </div>
+            ) : (
+              <div>
+                {appt.type} on {new Date(appt.date).toLocaleDateString()} at{" "}
+                {appt.time}
+              </div>
+            )}
+          </li>
+        ))}
       </ul>
 
       {/* Form to add a new appointment */}
       <div className="add-appointment-form">
         <h3>Add Appointment</h3>
-        <form onSubmit={handleAppointmentSubmit}>
+        <form onSubmit={handleNewAppointmentSubmit}>
           <label>
             Date:
             <input
               type="date"
               name="date"
-              value={appointment.date}
-              onChange={handleAppointmentChange}
+              value={newAppointment.date}
+              onChange={handleNewAppointmentChange}
               required
             />
           </label>
@@ -96,8 +222,8 @@ const PatientDetail = () => {
             <input
               type="time"
               name="time"
-              value={appointment.time}
-              onChange={handleAppointmentChange}
+              value={newAppointment.time}
+              onChange={handleNewAppointmentChange}
               required
             />
           </label>
@@ -106,14 +232,23 @@ const PatientDetail = () => {
             <input
               type="text"
               name="type"
-              value={appointment.type}
-              onChange={handleAppointmentChange}
+              value={newAppointment.type}
+              onChange={handleNewAppointmentChange}
               required
             />
           </label>
           <button type="submit">Add Appointment</button>
         </form>
       </div>
+
+      {isEditing ? (
+        <div>
+          <button onClick={handleSaveChanges}>Save Changes</button>
+          <button onClick={handleCancelEdit}>Cancel</button>
+        </div>
+      ) : (
+        <button onClick={handleEditClick}>Edit</button>
+      )}
     </div>
   );
 };
