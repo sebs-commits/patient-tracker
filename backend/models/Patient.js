@@ -7,8 +7,8 @@ const PatientSchema = new mongoose.Schema({
   room: { type: String, required: true },
   appointments: [
     {
-      date: { type: Date, required: true },
-      type: { type: String, required: true },
+      date: { type: Date },
+      type: { type: String },
     },
   ],
 });
