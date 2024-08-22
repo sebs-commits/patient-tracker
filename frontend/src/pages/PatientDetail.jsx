@@ -7,6 +7,7 @@ const PatientDetail = () => {
   const [patient, setPatient] = useState(null);
   const [appointment, setAppointment] = useState({
     date: "",
+    time: "",
     type: "",
   });
 
@@ -35,7 +36,7 @@ const PatientDetail = () => {
     try {
       const updatedPatient = await addAppointment(id, appointment);
       setPatient(updatedPatient); // Update the patient with the new appointment
-      setAppointment({ date: "", type: "" }); // Reset the form
+      setAppointment({ date: "", time: "", type: "" }); // Reset the form
     } catch (error) {
       console.error("Error adding appointment:", error);
     }
@@ -67,7 +68,8 @@ const PatientDetail = () => {
         {patient.appointments && patient.appointments.length > 0 ? (
           patient.appointments.map((appt, index) => (
             <li key={index}>
-              {appt.type} on {new Date(appt.date).toLocaleDateString()}
+              {appt.type} on {new Date(appt.date).toLocaleDateString()} at{" "}
+              {appt.time}{" "}
             </li>
           ))
         ) : (
@@ -85,6 +87,16 @@ const PatientDetail = () => {
               type="date"
               name="date"
               value={appointment.date}
+              onChange={handleAppointmentChange}
+              required
+            />
+          </label>
+          <label>
+            Time:
+            <input
+              type="time"
+              name="time"
+              value={appointment.time}
               onChange={handleAppointmentChange}
               required
             />

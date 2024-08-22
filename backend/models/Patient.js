@@ -8,6 +8,7 @@ const PatientSchema = new mongoose.Schema({
   appointments: [
     {
       date: { type: Date },
+      time: { type: String },
       type: { type: String },
     },
   ],
