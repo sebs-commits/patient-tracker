@@ -32,6 +32,19 @@ export const addPatient = async (patientData) => {
     throw error;
   }
 };
+// Add an appointment to a patient
+export const addAppointment = async (id, appointmentData) => {
+  try {
+    const response = await axios.put(
+      `/api/patients/${id}/appointments`,
+      appointmentData
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error adding appointment:", error);
+    throw error;
+  }
+};
 
 // Update a patient
 export const updatePatient = async (id, updatedData) => {

@@ -73,6 +73,25 @@ const deletePatient = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+// Add appointment to a patient
+const addAppointment = async (req, res) => {
+  try {
+    const patient = await Patient.findById(req.params.id);
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    // Push the new appointment to the patient's appointments array
+    patient.appointments.push(req.body);
+
+    // Save the updated patient record
+    await patient.save();
+
+    res.status(200).json(patient);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 module.exports = {
   addPatient,
@@ -80,4 +99,5 @@ module.exports = {
   getPatientById,
   updatePatient,
   deletePatient,
+  addAppointment,
 };
