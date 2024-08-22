@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AddPatients from "./pages/addPatients";
 import NavBar from "../components/NavBar";
 import PatientList from "./pages/PatientList";
+import PatientDetail from "./pages/PatientDetail";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/add-patient" element={<AddPatients />} />
           <Route path="/patients" element={<PatientList />} />
+          <Route path="/patients/:id" element={<PatientDetail />} />
         </Routes>
       </div>
     </Router>
