@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { fetchPatientById } from "../api/patients";
+import { fetchPatientById, addAppointment } from "../api/patients";
 
 const PatientDetail = () => {
   const { id } = useParams();
   const [patient, setPatient] = useState(null);
+  const [appointment, setAppointment] = useState({
+    date: "",
+    type: "",
+  });
 
   useEffect(() => {
     const fetchPatient = async () => {
@@ -18,6 +22,24 @@ const PatientDetail = () => {
 
     fetchPatient();
   }, [id]);
+
+  const handleAppointmentChange = (e) => {
+    setAppointment({
+      ...appointment,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleAppointmentSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const updatedPatient = await addAppointment(id, appointment);
+      setPatient(updatedPatient); // Update the patient with the new appointment
+      setAppointment({ date: "", type: "" }); // Reset the form
+    } catch (error) {
+      console.error("Error adding appointment:", error);
+    }
+  };
 
   if (!patient) {
     return <div>Loading...</div>;
@@ -38,6 +60,48 @@ const PatientDetail = () => {
       <p>
         <strong>Healthcare ID:</strong> {patient.healthcareID}
       </p>
+
+      {/* List existing appointments */}
+      <h3>Appointments</h3>
+      <ul>
+        {patient.appointments && patient.appointments.length > 0 ? (
+          patient.appointments.map((appt, index) => (
+            <li key={index}>
+              {appt.type} on {new Date(appt.date).toLocaleDateString()}
+            </li>
+          ))
+        ) : (
+          <li>No appointments</li>
+        )}
+      </ul>
+
+      {/* Form to add a new appointment */}
+      <div className="add-appointment-form">
+        <h3>Add Appointment</h3>
+        <form onSubmit={handleAppointmentSubmit}>
+          <label>
+            Date:
+            <input
+              type="date"
+              name="date"
+              value={appointment.date}
+              onChange={handleAppointmentChange}
+              required
+            />
+          </label>
+          <label>
+            Type:
+            <input
+              type="text"
+              name="type"
+              value={appointment.type}
+              onChange={handleAppointmentChange}
+              required
+            />
+          </label>
+          <button type="submit">Add Appointment</button>
+        </form>
+      </div>
     </div>
   );
 };
