@@ -1,4 +1,5 @@
 const express = require("express");
+require("dotenv").config();
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
@@ -26,15 +27,18 @@ router.post("/login", async (req, res) => {
 
     // Generate JWT
     const token = jwt.sign(
-      { userId: user._id, role: user.role },
+      { _id: user._id, role: user.role }, // Use _id for consistency
       process.env.JWT_SECRET,
       {
         expiresIn: "1h",
       }
     );
 
+    console.log("Generated Token:", token); // Log the token for debugging
+
     res.status(200).json({ token });
   } catch (error) {
+    console.error("Login error:", error.message); // Log errors for debugging
     res.status(400).json({ message: error.message });
   }
 });
