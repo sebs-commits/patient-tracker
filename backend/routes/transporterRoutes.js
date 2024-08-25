@@ -3,6 +3,7 @@ const router = express.Router();
 const { authenticate, authorize } = require("../middleware/auth");
 const {
   assignEarliestAppointment,
+  completeRequest,
 } = require("../controllers/transporterController");
 
 // Define the route for assigning the earliest appointment to a transporter
@@ -16,6 +17,14 @@ router.post(
   assignEarliestAppointment
 );
 
+router.put(
+  "/:id/complete-request",
+  authenticate,
+  authorize("patient_transporter"),
+  completeRequest
+);
+
+// Test route
 router.get("/test-auth", authorize, (req, res) => {
   res.json({ message: "You are authenticated", user: req.user });
 });

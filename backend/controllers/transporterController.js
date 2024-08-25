@@ -61,6 +61,56 @@ const assignEarliestAppointment = async (req, res) => {
   }
 };
 
+const completeRequest = async (req, res) => {
+  try {
+    const transporterId = req.user._id;
+
+    // Find the transporter and populate the request details
+    const transporter = await User.findById(transporterId).populate(
+      "requests.patientId"
+    );
+
+    if (!transporter) {
+      return res.status(404).json({ message: "Transporter not found" });
+    }
+
+    // Ensure there's a request to complete
+    if (transporter.requests.length === 0) {
+      return res.status(400).json({ message: "No active request to complete" });
+    }
+
+    const activeRequest = transporter.requests[0]; // Transporter can only pick up one request at a time
+
+    // Update the appointment status to 'completed' in the Patient's record
+    const patient = await Patient.findById(activeRequest.patientId);
+
+    const appointment = patient.appointments.id(activeRequest.appointmentId);
+
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+
+    appointment.status = "completed";
+
+    // Remove the request from the transporter and mark them as available
+    transporter.requests = [];
+    transporter.isAvailable = true;
+
+    // Save the updated transporter and patient records
+    await transporter.save();
+    await patient.save();
+
+    res.status(200).json({
+      message: "Request completed successfully",
+      transporter,
+      appointment,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
 module.exports = {
   assignEarliestAppointment,
+  completeRequest,
 };
