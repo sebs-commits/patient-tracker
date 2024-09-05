@@ -7,7 +7,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import PropTypes from "prop-types";
-import AddPatients from "./pages/addPatients";
+import AddPatients from "./pages/AddPatients";
 //import NavBar from "../components/NavBar";
 import PatientList from "./pages/PatientList";
 import PatientDetail from "./pages/PatientDetail";
