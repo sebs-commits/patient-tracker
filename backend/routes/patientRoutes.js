@@ -11,7 +11,7 @@ const {
   addAppointment,
 } = require("../controllers/patientController");
 
-// Define routes
+// General routes for CRUD operations
 router.post("/patients", authenticate, authorize("admin"), addPatient);
 router.get("/patients", authenticate, getPatients);
 router.get("/patients/:id", authenticate, getPatientById);

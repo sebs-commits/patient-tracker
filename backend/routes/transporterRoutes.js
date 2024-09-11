@@ -6,17 +6,14 @@ const {
   completeRequest,
 } = require("../controllers/transporterController");
 
-// Define the route for assigning the earliest appointment to a transporter
-router.get("/test", (req, res) => {
-  res.send("Route is working");
-});
+// Route to assign an appointment
 router.post(
   "/assign-appointment",
   authenticate,
   authorize("patient_transporter"),
   assignEarliestAppointment
 );
-
+// Route to complete an assigned request
 router.put(
   "/:id/complete-request",
   authenticate,
@@ -24,7 +21,11 @@ router.put(
   completeRequest
 );
 
-// Test route
+// Test routes
+router.get("/test", (req, res) => {
+  res.send("Route is working");
+});
+
 router.get("/test-auth", authorize, (req, res) => {
   res.json({ message: "You are authenticated", user: req.user });
 });
