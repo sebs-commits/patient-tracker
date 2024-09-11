@@ -7,8 +7,9 @@ import {
 
 const TransporterDashboard = () => {
   const [appointment, setAppointment] = useState(null);
-  const [setRequest] = useState(null);
+  const [request, setRequest] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingComplete, setLoadingComplete] = useState(false);
   const [error, setError] = useState(null);
   const [pendingRequests, setPendingRequests] = useState([]);
 
@@ -19,7 +20,6 @@ const TransporterDashboard = () => {
         const requests = await checkForPendingRequests();
         setPendingRequests(requests);
         if (requests.length === 0) {
-          // Handle no pending requests here
           setError("No pending requests found.");
         }
       } catch (err) {
@@ -29,7 +29,7 @@ const TransporterDashboard = () => {
       }
     };
 
-    fetchPendingRequests(); // Fetch pending requests on component mount
+    fetchPendingRequests();
   }, []);
 
   const handleAssignAppointment = async () => {
@@ -47,16 +47,18 @@ const TransporterDashboard = () => {
   };
 
   const handleCompleteAppointment = async () => {
-    setLoading(true);
+    setLoadingComplete(true);
     setError(null);
 
     try {
       const response = await completeRequest();
       setRequest(response);
+      setAppointment(null);
+      window.location.reload();
     } catch (err) {
       setError("Error completing appointment: " + err.message);
     } finally {
-      setLoading(false);
+      setLoadingComplete(false);
     }
   };
 
@@ -64,16 +66,18 @@ const TransporterDashboard = () => {
     <div>
       <h2>Patient Transporter Dashboard</h2>
       {loading && <p>Loading...</p>}
-      {/* {error && <p style={{ color: "red" }}>{error}</p>}{" "} */}
-      {/* Check if there are pending requests */}
-      {!loading && pendingRequests.length === 0 && (
+      {error && <p style={{ color: "cyan" }}>{error}</p>}
+      {/* Display no pending requests */}
+      {/* {!loading && pendingRequests.length === 0 && (
         <p>No pending requests available.</p>
-      )}
+      )} */}
+      {/* Assign appointment button */}
       {!loading && pendingRequests.length > 0 && !appointment && (
         <button onClick={handleAssignAppointment}>
           Assign Earliest Appointment
         </button>
       )}
+      {/* Appointment details */}
       {appointment && (
         <div>
           <h3>Appointment Assigned:</h3>
@@ -90,7 +94,18 @@ const TransporterDashboard = () => {
           <p>
             <strong>Status:</strong> {appointment.appointment.status}
           </p>
-          <button onClick={handleCompleteAppointment}>Complete Request</button>
+          {/* Complete request button */}
+          <button onClick={handleCompleteAppointment}>
+            {loadingComplete ? "Completing..." : "Complete Request"}
+          </button>
+        </div>
+      )}
+      {/* Show completed request if available */}
+      {/* The part below is happening too fast, change or get rid of it */}
+      {request && (
+        <div>
+          <h3>Request Completed:</h3>
+          <p>Transporter has completed the request successfully.</p>
         </div>
       )}
     </div>
