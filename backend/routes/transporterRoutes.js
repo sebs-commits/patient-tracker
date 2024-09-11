@@ -15,7 +15,7 @@ router.post(
 );
 // Route to complete an assigned request
 router.put(
-  "/:id/complete-request",
+  "/complete-request",
   authenticate,
   authorize("patient_transporter"),
   completeRequest
