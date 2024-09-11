@@ -36,6 +36,7 @@ const assignEarliestAppointment = async (req, res) => {
         status: pendingAppointment.status,
       },
     });
+    transporter.isAvailable = "false";
 
     // Mark the appointment as assigned
     pendingAppointment.status = "assigned";
@@ -60,7 +61,7 @@ const assignEarliestAppointment = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
+// Allows transporter to move from pending to complete
 const completeRequest = async (req, res) => {
   try {
     const transporterId = req.user._id;
