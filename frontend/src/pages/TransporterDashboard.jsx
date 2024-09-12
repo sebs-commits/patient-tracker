@@ -12,6 +12,7 @@ const TransporterDashboard = () => {
   const [loadingComplete, setLoadingComplete] = useState(false);
   const [error, setError] = useState(null);
   const [pendingRequests, setPendingRequests] = useState([]);
+  const [completionMessage, setCompletionMessage] = useState(null); 
 
   useEffect(() => {
     const fetchPendingRequests = async () => {
@@ -31,6 +32,12 @@ const TransporterDashboard = () => {
     };
 
     fetchPendingRequests();
+
+    // Retrieve appointment from localStorage
+    const storedAppointment = localStorage.getItem("appointment");
+    if (storedAppointment) {
+      setAppointment(JSON.parse(storedAppointment));
+    }
   }, []);
 
   const handleAssignAppointment = async () => {
@@ -40,6 +47,8 @@ const TransporterDashboard = () => {
     try {
       const response = await assignAppointment();
       setAppointment(response);
+      // Store appointment in localStorage
+      localStorage.setItem("appointment", JSON.stringify(response));
     } catch (err) {
       console.error("Error assigning appointment:", err); 
       setError("Unable to assign appointment. Please try again later."); 
@@ -56,7 +65,8 @@ const TransporterDashboard = () => {
       const response = await completeRequest();
       setRequest(response);
       setAppointment(null);
-      window.location.reload();
+      localStorage.removeItem("appointment");
+      setCompletionMessage("Transporter has completed the request successfully."); 
     } catch (err) {
       console.error("Error completing appointment:", err); 
       setError("Unable to complete appointment. Please try again later."); 
@@ -104,11 +114,10 @@ const TransporterDashboard = () => {
         </div>
       )}
       {/* Show completed request if available */}
-      {/* The part below is happening too fast, change or get rid of it */}
-      {request && (
+      {completionMessage && (
         <div>
           <h3>Request Completed:</h3>
-          <p>Transporter has completed the request successfully.</p>
+          <p>{completionMessage}</p>
         </div>
       )}
     </div>
