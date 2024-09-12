@@ -23,7 +23,8 @@ const TransporterDashboard = () => {
           setError("No pending requests found.");
         }
       } catch (err) {
-        setError("Error checking pending requests: " + err.message);
+        console.error("Error checking pending requests:", err); 
+        setError("Unable to fetch pending requests. Please try again later."); 
       } finally {
         setLoading(false);
       }
@@ -40,7 +41,8 @@ const TransporterDashboard = () => {
       const response = await assignAppointment();
       setAppointment(response);
     } catch (err) {
-      setError("Error assigning appointment: " + err.message);
+      console.error("Error assigning appointment:", err); 
+      setError("Unable to assign appointment. Please try again later."); 
     } finally {
       setLoading(false);
     }
@@ -56,7 +58,8 @@ const TransporterDashboard = () => {
       setAppointment(null);
       window.location.reload();
     } catch (err) {
-      setError("Error completing appointment: " + err.message);
+      console.error("Error completing appointment:", err); 
+      setError("Unable to complete appointment. Please try again later."); 
     } finally {
       setLoadingComplete(false);
     }
