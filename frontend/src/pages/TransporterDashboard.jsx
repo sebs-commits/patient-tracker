@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
   assignAppointment,
   checkForPendingRequests,
@@ -12,7 +14,6 @@ const TransporterDashboard = () => {
   const [loadingComplete, setLoadingComplete] = useState(false);
   const [error, setError] = useState(null);
   const [pendingRequests, setPendingRequests] = useState([]);
-  const [completionMessage, setCompletionMessage] = useState(null); 
 
   useEffect(() => {
     const fetchPendingRequests = async () => {
@@ -21,11 +22,11 @@ const TransporterDashboard = () => {
         const requests = await checkForPendingRequests();
         setPendingRequests(requests);
         if (requests.length === 0) {
-          setError("No pending requests found.");
+          toast.info("No pending requests found.");
         }
       } catch (err) {
         console.error("Error checking pending requests:", err); 
-        setError("Unable to fetch pending requests. Please try again later."); 
+        toast.error("Unable to fetch pending requests. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -33,7 +34,6 @@ const TransporterDashboard = () => {
 
     fetchPendingRequests();
 
-    // Retrieve appointment from localStorage
     const storedAppointment = localStorage.getItem("appointment");
     if (storedAppointment) {
       setAppointment(JSON.parse(storedAppointment));
@@ -47,11 +47,11 @@ const TransporterDashboard = () => {
     try {
       const response = await assignAppointment();
       setAppointment(response);
-      // Store appointment in localStorage
       localStorage.setItem("appointment", JSON.stringify(response));
+      toast.success("Appointment assigned successfully!");
     } catch (err) {
       console.error("Error assigning appointment:", err); 
-      setError("Unable to assign appointment. Please try again later."); 
+      toast.error("Unable to assign appointment. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -66,10 +66,10 @@ const TransporterDashboard = () => {
       setRequest(response);
       setAppointment(null);
       localStorage.removeItem("appointment");
-      setCompletionMessage("Transporter has completed the request successfully."); 
+      toast.success("Transporter has completed the request successfully.");
     } catch (err) {
       console.error("Error completing appointment:", err); 
-      setError("Unable to complete appointment. Please try again later."); 
+      toast.error("Unable to complete appointment. Please try again later.");
     } finally {
       setLoadingComplete(false);
     }
@@ -79,18 +79,11 @@ const TransporterDashboard = () => {
     <div>
       <h2>Patient Transporter Dashboard</h2>
       {loading && <p>Loading...</p>}
-      {error && <p style={{ color: "cyan" }}>{error}</p>}
-      {/* Display no pending requests */}
-      {/* {!loading && pendingRequests.length === 0 && (
-        <p>No pending requests available.</p>
-      )} */}
-      {/* Assign appointment button */}
       {!loading && pendingRequests.length > 0 && !appointment && (
         <button onClick={handleAssignAppointment}>
           Assign Earliest Appointment
         </button>
       )}
-      {/* Appointment details */}
       {appointment && (
         <div>
           <h3>Appointment Assigned:</h3>
@@ -107,19 +100,12 @@ const TransporterDashboard = () => {
           <p>
             <strong>Status:</strong> {appointment.appointment.status}
           </p>
-          {/* Complete request button */}
           <button onClick={handleCompleteAppointment}>
             {loadingComplete ? "Completing..." : "Complete Request"}
           </button>
         </div>
       )}
-      {/* Show completed request if available */}
-      {completionMessage && (
-        <div>
-          <h3>Request Completed:</h3>
-          <p>{completionMessage}</p>
-        </div>
-      )}
+      <ToastContainer />
     </div>
   );
 };

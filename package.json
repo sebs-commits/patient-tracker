@@ -5,8 +5,7 @@
     "client": "cd frontend && npm run dev"
   },
   "dependencies": {
-    "concurrently": "^8.2.2",
-    "react-toastify": "^10.0.5"
+    "concurrently": "^8.2.2"
   },
   "name": "patient-tracker",
   "version": "1.0.0",
