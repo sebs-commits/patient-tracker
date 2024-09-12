@@ -22,7 +22,7 @@ const assignEarliestAppointment = async (req, res) => {
     if (!patient || !patient.appointments.length) {
       return res.status(404).json({ message: "No pending appointments found" });
     }
-    if ((transporter.isAvailable = false)) {
+    if ((transporter.isAvailable === false)) {
       return res.status(404).json({ message: "Transporter assigned" });
     }
 
@@ -39,7 +39,7 @@ const assignEarliestAppointment = async (req, res) => {
         status: pendingAppointment.status,
       },
     });
-    transporter.isAvailable = "false";
+    transporter.isAvailable = false;
 
     // Mark the appointment as assigned
     pendingAppointment.status = "assigned";
