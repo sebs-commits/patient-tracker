@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   assignAppointment,
   checkForPendingRequests,
@@ -9,10 +9,10 @@ import {
 
 const TransporterDashboard = () => {
   const [appointment, setAppointment] = useState(null);
-  const [request, setRequest] = useState(null);
+  const [, setRequest] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loadingComplete, setLoadingComplete] = useState(false);
-  const [error, setError] = useState(null);
+  const [, setError] = useState(null);
   const [pendingRequests, setPendingRequests] = useState([]);
 
   useEffect(() => {
@@ -25,8 +25,10 @@ const TransporterDashboard = () => {
           toast.info("No pending requests found.");
         }
       } catch (err) {
-        console.error("Error checking pending requests:", err); 
-        toast.error("Unable to fetch pending requests. Please try again later.");
+        console.error("Error checking pending requests:", err);
+        toast.error(
+          "Unable to fetch pending requests. Please try again later."
+        );
       } finally {
         setLoading(false);
       }
@@ -50,7 +52,7 @@ const TransporterDashboard = () => {
       localStorage.setItem("appointment", JSON.stringify(response));
       toast.success("Appointment assigned successfully!");
     } catch (err) {
-      console.error("Error assigning appointment:", err); 
+      console.error("Error assigning appointment:", err);
       toast.error("Unable to assign appointment. Please try again later.");
     } finally {
       setLoading(false);
@@ -68,7 +70,7 @@ const TransporterDashboard = () => {
       localStorage.removeItem("appointment");
       toast.success("Transporter has completed the request successfully.");
     } catch (err) {
-      console.error("Error completing appointment:", err); 
+      console.error("Error completing appointment:", err);
       toast.error("Unable to complete appointment. Please try again later.");
     } finally {
       setLoadingComplete(false);
