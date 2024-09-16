@@ -9,7 +9,7 @@ const AppointmentSchema = new mongoose.Schema({
     enum: ["pending", "assigned", "completed"],
     default: "pending",
     required: true,
-  }, // Add status field
+  },
 });
 
 const PatientSchema = new mongoose.Schema({

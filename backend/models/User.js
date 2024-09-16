@@ -19,11 +19,20 @@ const UserSchema = new mongoose.Schema({
       appointmentId: {
         type: mongoose.Schema.Types.ObjectId,
       },
+      appointmentDetails: {
+        date: { type: Date, required: true },
+        time: { type: String, required: true },
+        type: { type: String, required: true },
+        status: {
+          type: String,
+          enum: ["pending", "assigned", "completed"],
+          required: true,
+        },
+      },
     },
   ], // Array to store a reference to patient and appointment ID
 });
 
-// You can add a validation check to enforce the max length of 1 for the array
 UserSchema.path("requests").validate(function (value) {
   return value.length <= 1;
 }, "Only one request can be assigned at a time.");
