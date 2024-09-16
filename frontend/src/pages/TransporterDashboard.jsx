@@ -16,6 +16,21 @@ const TransporterDashboard = () => {
   const [, setError] = useState(null);
   const [pendingRequests, setPendingRequests] = useState([]);
 
+  const fetchAssignedAppointment = async () => {
+    try {
+      const response = await getAssignedAppointment();
+      if (response.request) {
+        setAppointment(response.request);
+        localStorage.setItem("appointment", JSON.stringify(response.request));
+      } else {
+        setAppointment(null);
+        localStorage.removeItem("appointment");
+      }
+    } catch (err) {
+      console.error("Error fetching assigned appointment:", err);
+    }
+  };
+
   useEffect(() => {
     const fetchPendingRequests = async () => {
       try {
@@ -32,21 +47,6 @@ const TransporterDashboard = () => {
         );
       } finally {
         setLoading(false);
-      }
-    };
-
-    const fetchAssignedAppointment = async () => {
-      try {
-        const response = await getAssignedAppointment();
-        if (response.request) {
-          setAppointment(response.request);
-          localStorage.setItem("appointment", JSON.stringify(response.request));
-        } else {
-          setAppointment(null);
-          localStorage.removeItem("appointment");
-        }
-      } catch (err) {
-        console.error("Error fetching assigned appointment:", err);
       }
     };
 
@@ -69,6 +69,7 @@ const TransporterDashboard = () => {
         setAppointment(response);
         localStorage.setItem("appointment", JSON.stringify(response));
         toast.success("Appointment assigned successfully!");
+        await fetchAssignedAppointment(); 
       } else {
         setAppointment(null);
         localStorage.removeItem("appointment");
@@ -91,6 +92,7 @@ const TransporterDashboard = () => {
       setAppointment(null);
       localStorage.removeItem("appointment");
       toast.success("Transporter has completed the request successfully.");
+      // Removed fetchAssignedAppointment call
     } catch (err) {
       console.error("Error completing appointment:", err);
       toast.error("Unable to complete appointment. Please try again later.");
@@ -135,3 +137,5 @@ const TransporterDashboard = () => {
 };
 
 export default TransporterDashboard;
+
+// this has now become a clusterfuck..... i need to reorganize this, or make it easier to read lmao
