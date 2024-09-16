@@ -49,8 +49,8 @@ export const checkForPendingRequests = async () => {
 export const completeRequest = async () => {
   try {
     const response = await axios.put(
-      `/api/transporters/complete-request`, // API endpoint
-      {}, // Body of the request (empty object here)
+      `/api/transporters/complete-request`, 
+      {}, 
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -63,6 +63,27 @@ export const completeRequest = async () => {
     console.error(
       "Error completing assignment:",
       error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};
+// Fetch the assigned appointment
+export const getAssignedAppointment = async () => {
+  try {
+    const response = await axios.get(
+      "/api/transporters/assigned-appointment",
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error fetching assigned appointment:",
+      error.response || error.message
     );
     throw error;
   }

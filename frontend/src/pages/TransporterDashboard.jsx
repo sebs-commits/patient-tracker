@@ -5,6 +5,7 @@ import {
   assignAppointment,
   checkForPendingRequests,
   completeRequest,
+  getAssignedAppointment,
 } from "../api/transporter";
 
 const TransporterDashboard = () => {
@@ -34,7 +35,23 @@ const TransporterDashboard = () => {
       }
     };
 
+    const fetchAssignedAppointment = async () => {
+      try {
+        const response = await getAssignedAppointment();
+        if (response.request) {
+          setAppointment(response.request);
+          localStorage.setItem("appointment", JSON.stringify(response.request));
+        } else {
+          setAppointment(null);
+          localStorage.removeItem("appointment");
+        }
+      } catch (err) {
+        console.error("Error fetching assigned appointment:", err);
+      }
+    };
+
     fetchPendingRequests();
+    fetchAssignedAppointment();
 
     const storedAppointment = localStorage.getItem("appointment");
     if (storedAppointment) {
@@ -48,9 +65,14 @@ const TransporterDashboard = () => {
 
     try {
       const response = await assignAppointment();
-      setAppointment(response);
-      localStorage.setItem("appointment", JSON.stringify(response));
-      toast.success("Appointment assigned successfully!");
+      if (response) {
+        setAppointment(response);
+        localStorage.setItem("appointment", JSON.stringify(response));
+        toast.success("Appointment assigned successfully!");
+      } else {
+        setAppointment(null);
+        localStorage.removeItem("appointment");
+      }
     } catch (err) {
       console.error("Error assigning appointment:", err);
       toast.error("Unable to assign appointment. Please try again later.");
@@ -86,21 +108,21 @@ const TransporterDashboard = () => {
           Assign Earliest Appointment
         </button>
       )}
-      {appointment && (
+      {appointment && appointment.patientId && (
         <div>
           <h3>Appointment Assigned:</h3>
           <p>
-            <strong>Patient Name:</strong> {appointment.patient.name}
+            <strong>Patient Name:</strong> {appointment.patientId.name}
           </p>
           <p>
-            <strong>Pickup Location:</strong> {appointment.patient.unit}, Room{" "}
-            {appointment.patient.room}
+            <strong>Pickup Location:</strong> {appointment.patientId.unit}, Room{" "}
+            {appointment.patientId.room}
           </p>
           <p>
-            <strong>Drop-off Location:</strong> {appointment.appointment.type}
+            <strong>Drop-off Location:</strong> {appointment.appointmentDetails.type}
           </p>
           <p>
-            <strong>Status:</strong> {appointment.appointment.status}
+            <strong>Status:</strong> {appointment.appointmentDetails.status}
           </p>
           <button onClick={handleCompleteAppointment}>
             {loadingComplete ? "Completing..." : "Complete Request"}
