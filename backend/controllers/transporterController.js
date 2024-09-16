@@ -113,8 +113,45 @@ const completeRequest = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+// Retrieve the assigned appointment
+const getAssignedAppointment = async (req, res) => {
+  try {
+    const transporterId = req.user._id;
 
+    // Find the transporter and populate the request details
+    const transporter = await User.findById(transporterId).populate(
+      "requests.patientId"
+    );
+
+    if (!transporter) {
+      return res.status(404).json({ message: "Transporter not found" });
+    }
+
+    // Ensure there's an assigned request
+    if (transporter.requests.length === 0) {
+      return res.status(404).json({ message: "No assigned appointment found" });
+    }
+
+    const activeRequest = transporter.requests[0]; 
+
+    res.status(200).json({
+      message: "Assigned appointment retrieved successfully",
+      request: {
+        patientId: {
+          _id: activeRequest.patientId._id,
+          name: activeRequest.patientId.name,
+          unit: activeRequest.patientId.unit,
+          room: activeRequest.patientId.room,
+        },
+        appointmentDetails: activeRequest.appointmentDetails,
+      },
+    });
+  } catch (error) { // Add this catch block
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
 module.exports = {
   assignEarliestAppointment,
+  getAssignedAppointment,
   completeRequest,
 };
