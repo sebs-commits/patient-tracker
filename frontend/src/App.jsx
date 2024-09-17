@@ -1,5 +1,4 @@
-import "./App.css";
-//import React from "react";
+import "./styles/App.css";
 import {
   BrowserRouter as Router,
   Routes,
@@ -7,13 +6,12 @@ import {
   Navigate,
 } from "react-router-dom";
 import PropTypes from "prop-types";
-import AddPatients from "./pages/AddPatients";
-//import NavBar from "../components/NavBar";
-import PatientList from "./pages/PatientList";
-import PatientDetail from "./pages/PatientDetail";
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import Register from "./pages/Register";
+import AddPatients from "./components/pages/AddPatients";
+import PatientList from "./components/pages/PatientList";
+import PatientDetail from "./components/pages/PatientDetail";
+import Login from "./components/pages/Login";
+import Dashboard from "./components/pages/Dashboard";
+import Register from "./components/pages/Register";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -23,9 +21,8 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-// Define PropTypes for ProtectedRoute
 ProtectedRoute.propTypes = {
-  children: PropTypes.node.isRequired, // Ensure children is a React node and is required
+  children: PropTypes.node.isRequired,
 };
 
 const App = () => {

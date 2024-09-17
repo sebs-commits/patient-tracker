@@ -1,6 +1,7 @@
 import { jwtDecode } from "jwt-decode";
 import { Link } from "react-router-dom";
 import TransporterDashboard from "./TransporterDashboard";
+
 const Dashboard = () => {
   const token = localStorage.getItem("token");
 

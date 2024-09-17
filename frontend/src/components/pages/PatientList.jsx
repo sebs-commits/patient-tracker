@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchAllPatients } from "../api/patients";
+import { fetchAllPatients } from "../../api/patients";
 import { Link } from "react-router-dom";
 
 const PatientList = () => {

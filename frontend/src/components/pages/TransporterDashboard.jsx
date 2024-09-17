@@ -6,7 +6,8 @@ import {
   checkForPendingRequests,
   completeRequest,
   getAssignedAppointment,
-} from "../api/transporter";
+} from "../../api/transporter";
+import Button from "../common/Button";
 
 const TransporterDashboard = () => {
   const [appointment, setAppointment] = useState(null);
@@ -69,7 +70,7 @@ const TransporterDashboard = () => {
         setAppointment(response);
         localStorage.setItem("appointment", JSON.stringify(response));
         toast.success("Appointment assigned successfully!");
-        await fetchAssignedAppointment(); 
+        await fetchAssignedAppointment();
       } else {
         setAppointment(null);
         localStorage.removeItem("appointment");
@@ -92,7 +93,6 @@ const TransporterDashboard = () => {
       setAppointment(null);
       localStorage.removeItem("appointment");
       toast.success("Transporter has completed the request successfully.");
-      // Removed fetchAssignedAppointment call
     } catch (err) {
       console.error("Error completing appointment:", err);
       toast.error("Unable to complete appointment. Please try again later.");
@@ -106,9 +106,9 @@ const TransporterDashboard = () => {
       <h2>Patient Transporter Dashboard</h2>
       {loading && <p>Loading...</p>}
       {!loading && pendingRequests.length > 0 && !appointment && (
-        <button onClick={handleAssignAppointment}>
+        <Button onClick={handleAssignAppointment}>
           Assign Earliest Appointment
-        </button>
+        </Button>
       )}
       {appointment && appointment.patientId && (
         <div>
@@ -126,9 +126,9 @@ const TransporterDashboard = () => {
           <p>
             <strong>Status:</strong> {appointment.appointmentDetails.status}
           </p>
-          <button onClick={handleCompleteAppointment}>
+          <Button onClick={handleCompleteAppointment} disabled={loadingComplete}>
             {loadingComplete ? "Completing..." : "Complete Request"}
-          </button>
+          </Button>
         </div>
       )}
       <ToastContainer />
@@ -137,5 +137,3 @@ const TransporterDashboard = () => {
 };
 
 export default TransporterDashboard;
-
-// this has now become a clusterfuck..... i need to reorganize this, or make it easier to read lmao

@@ -4,7 +4,7 @@ import {
   fetchPatientById,
   updatePatient,
   addAppointment,
-} from "../api/patients";
+} from "../../api/patients";
 
 const PatientDetail = () => {
   const { id } = useParams();
@@ -155,7 +155,6 @@ const PatientDetail = () => {
         </p>
       </div>
 
-      {/* List existing appointments with edit capability */}
       <h3>Appointments</h3>
       <ul>
         {editablePatient.appointments.map((appt, index) => (
@@ -203,7 +202,6 @@ const PatientDetail = () => {
         ))}
       </ul>
 
-      {/* Form to add a new appointment */}
       <div className="add-appointment-form">
         <h3>Add Appointment</h3>
         <form onSubmit={handleNewAppointmentSubmit}>
