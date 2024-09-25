@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../../api/auth";
-import { Box, Button, FormControl, FormLabel, Input, Heading, Text, Flex } from "@chakra-ui/react";
+import { Box, Button, FormControl, FormLabel, Input, Heading, Text, Flex, VStack } from "@chakra-ui/react";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -25,31 +25,45 @@ const Login = () => {
       height="100vh"
       alignItems="center"
       justifyContent="center"
-      bg="gray.100"
+      bg="blue.100"
     >
-      <Box maxW="sm" mx="auto" mt="10" p="6" borderWidth="1px" borderRadius="lg" boxShadow="lg" bg="white">
-        <Heading as="h2" size="lg" mb="6">Login</Heading>
+      <Box 
+        maxW={{ base: "90%", sm: "80%", md: "70%", lg: "50%", xl: "50%" }} 
+        width="full"
+        mx="auto" 
+        mt="10" 
+        p="6" 
+        borderWidth="1px" 
+        borderRadius="lg" 
+        boxShadow="lg" 
+        bg="white"
+      >
+        <Heading as="h2" size="lg" mb="6" color="blue.700">Login</Heading>
         <form onSubmit={handleSubmit}>
-          <FormControl id="username" mb="4">
-            <FormLabel>Username</FormLabel>
-            <Input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </FormControl>
-          <FormControl id="password" mb="4">
-            <FormLabel>Password</FormLabel>
-            <Input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </FormControl>
-          {error && <Text color="red.500" mb="4">{error}</Text>}
-          <Button type="submit" colorScheme="teal" width="full">Login</Button>
+          <VStack spacing="4" width="full">
+            <FormControl id="username" isRequired>
+              <FormLabel color="blue.700">Username</FormLabel>
+              <Input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                width="full"
+              />
+            </FormControl>
+            <FormControl id="password" isRequired>
+              <FormLabel color="blue.700">Password</FormLabel>
+              <Input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                width="full"
+              />
+            </FormControl>
+            {error && <Text color="red.500">{error}</Text>}
+            <Button type="submit" colorScheme="blue" width="full">Login</Button>
+          </VStack>
         </form>
       </Box>
     </Flex>
