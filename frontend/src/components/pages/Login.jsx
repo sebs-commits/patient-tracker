@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { loginUser } from "../../api/auth";
 import { Box, Button, FormControl, FormLabel, Input, Heading, Text, Flex, VStack } from "@chakra-ui/react";
 
-const Login = () => {
+const Login = ({ setIsLoggedIn }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -13,8 +13,9 @@ const Login = () => {
     e.preventDefault();
     try {
       const { token } = await loginUser({ username, password });
-      localStorage.setItem("token", token); // Store JWT token in localStorage
-      navigate("/dashboard"); // Redirect to dashboard after successful login
+      localStorage.setItem("token", token);
+      setIsLoggedIn(true); // Update the login status
+      navigate("/dashboard");
     } catch (err) {
       setError("Invalid credentials. Please try again.", err);
     }

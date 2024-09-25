@@ -19,22 +19,29 @@ import {
 const NavBar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [userRole, setUserRole] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
+      setIsLoggedIn(true);
       try {
         const decodedToken = jwtDecode(token);
         setUserRole(decodedToken.role);
       } catch (error) {
         console.error("Error decoding token:", error);
       }
+    } else {
+      setIsLoggedIn(false);
+      setUserRole(null);
     }
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    setUserRole(null);
     navigate("/login");
   };
 
@@ -43,6 +50,10 @@ const NavBar = () => {
       {children}
     </Link>
   );
+
+  if (!isLoggedIn) {
+    return null;
+  }
 
   return (
     <Box>
