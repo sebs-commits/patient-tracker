@@ -1,12 +1,14 @@
 import { jwtDecode } from "jwt-decode";
 import { Link } from "react-router-dom";
 import TransporterDashboard from "./TransporterDashboard";
+import PatientList from "./PatientList"; // Import PatientList
+import { Box, Heading, Text, Button, VStack } from "@chakra-ui/react";
 
 const Dashboard = () => {
   const token = localStorage.getItem("token");
 
   if (!token) {
-    return <p>No token found. Please log in.</p>;
+    return <Text>No token found. Please log in.</Text>;
   }
 
   try {
@@ -14,25 +16,26 @@ const Dashboard = () => {
     const role = decodedToken.role;
 
     return (
-      <div>
-        <h2>Dashboard</h2>
+      <Box p="6" maxW="4xl" mx="auto" mt="10" borderWidth="1px" borderRadius="lg" boxShadow="lg" bg="blue.50">
+        <Heading as="h2" size="lg" mb="6" color="blue.700">Dashboard</Heading>
         {role === "admin" ? (
-          <div>
-            <p>Welcome, Admin!</p>
-            <Link to="/add-patient">Add Patient</Link>
-            <Link to="/patients">Manage Patients</Link>
-          </div>
+          <VStack spacing="4" width="full">
+            <Text color="blue.700">Welcome, Admin!</Text>
+            <Button as={Link} to="/add-patient" colorScheme="blue" width="full">Add Patient</Button>
+            <Button as={Link} to="/patients" colorScheme="blue" width="full">Manage Patients</Button>
+            <PatientList /> {/* Include PatientList */}
+          </VStack>
         ) : (
-          <div>
-            <p>Welcome, Patient Transporter!</p>
+          <VStack spacing="4" width="full">
+            <Text color="blue.700">Welcome, Patient Transporter!</Text>
             <TransporterDashboard />
-          </div>
+          </VStack>
         )}
-      </div>
+      </Box>
     );
   } catch (error) {
     console.error("Error decoding token:", error);
-    return <p>Error decoding token. Please log in again.</p>;
+    return <Text>Error decoding token. Please log in again.</Text>;
   }
 };
 

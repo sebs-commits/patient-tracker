@@ -5,6 +5,7 @@ import {
   updatePatient,
   addAppointment,
 } from "../../api/patients";
+import { Box, Button, FormControl, FormLabel, Input, Heading, VStack, Text, HStack, Grid, GridItem } from "@chakra-ui/react";
 
 const PatientDetail = () => {
   const { id } = useParams();
@@ -100,154 +101,144 @@ const PatientDetail = () => {
   };
 
   if (!patient) {
-    return <div>Loading...</div>;
+    return <Text>Loading...</Text>;
   }
 
   return (
-    <div className="patient-detail-page">
-      <h2>Patient Details</h2>
-
-      <div>
-        <p>
-          <strong>Name:</strong>
+    <Box p="6" maxW={{ base: "md", lg: "2xl" }} mx="auto" mt="10" borderWidth="1px" borderRadius="lg" boxShadow="lg" bg="blue.50">
+      <Heading as="h2" size="lg" mb="6" color="blue.700">Patient Details</Heading>
+      <VStack spacing="4" width="full">
+        <FormControl>
+          <FormLabel color="blue.700">Name</FormLabel>
           {isEditing ? (
-            <input
+            <Input
               type="text"
               name="name"
               value={editablePatient.name}
               onChange={handleInputChange}
             />
           ) : (
-            patient.name
+            <Text>{patient.name}</Text>
           )}
-        </p>
-
-        <p>
-          <strong>Unit:</strong>
+        </FormControl>
+        <FormControl>
+          <FormLabel color="blue.700">Unit</FormLabel>
           {isEditing ? (
-            <input
+            <Input
               type="text"
               name="unit"
               value={editablePatient.unit}
               onChange={handleInputChange}
             />
           ) : (
-            patient.unit
+            <Text>{patient.unit}</Text>
           )}
-        </p>
-
-        <p>
-          <strong>Room:</strong>
+        </FormControl>
+        <FormControl>
+          <FormLabel color="blue.700">Room</FormLabel>
           {isEditing ? (
-            <input
+            <Input
               type="text"
               name="room"
               value={editablePatient.room}
               onChange={handleInputChange}
             />
           ) : (
-            patient.room
+            <Text>{patient.room}</Text>
           )}
-        </p>
+        </FormControl>
+        <Text><strong>Healthcare ID:</strong> {patient.healthcareID}</Text>
+      </VStack>
 
-        <p>
-          <strong>Healthcare ID:</strong> {patient.healthcareID}
-        </p>
-      </div>
-
-      <h3>Appointments</h3>
-      <ul>
+      <Heading as="h3" size="md" mt="6" mb="4" color="blue.700">Appointments</Heading>
+      <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={4} width="full">
         {editablePatient.appointments.map((appt, index) => (
-          <li key={index}>
+          <GridItem key={index} p="4" borderWidth="1px" borderRadius="lg" bg="white" width="full">
             {isEditing ? (
-              <div>
-                <label>
-                  Type:
-                  <input
+              <VStack spacing="2" width="full">
+                <FormControl>
+                  <FormLabel color="blue.700">Type</FormLabel>
+                  <Input
                     type="text"
                     name="type"
                     value={appt.type}
                     onChange={(e) => handleAppointmentChange(index, e)}
                   />
-                </label>
-                <label>
-                  Date:
-                  <input
+                </FormControl>
+                <FormControl>
+                  <FormLabel color="blue.700">Date</FormLabel>
+                  <Input
                     type="date"
                     name="date"
                     value={appt.date.split("T")[0]} // Handle date format
                     onChange={(e) => handleAppointmentChange(index, e)}
                   />
-                </label>
-                <label>
-                  Time:
-                  <input
+                </FormControl>
+                <FormControl>
+                  <FormLabel color="blue.700">Time</FormLabel>
+                  <Input
                     type="time"
                     name="time"
                     value={appt.time}
                     onChange={(e) => handleAppointmentChange(index, e)}
                   />
-                </label>
-                <button onClick={() => handleRemoveAppointment(index)}>
-                  Remove
-                </button>
-              </div>
+                </FormControl>
+                <Button colorScheme="red" onClick={() => handleRemoveAppointment(index)}>Remove</Button>
+              </VStack>
             ) : (
-              <div>
-                {appt.type} on {new Date(appt.date).toLocaleDateString()} at{" "}
-                {appt.time}
-              </div>
+              <Text>{appt.type} on {new Date(appt.date).toLocaleDateString()} at {appt.time}</Text>
             )}
-          </li>
+          </GridItem>
         ))}
-      </ul>
+      </Grid>
 
-      <div className="add-appointment-form">
-        <h3>Add Appointment</h3>
+      <Box mt="6" width="full">
+        <Heading as="h3" size="md" mb="4" color="blue.700">Add Appointment</Heading>
         <form onSubmit={handleNewAppointmentSubmit}>
-          <label>
-            Date:
-            <input
-              type="date"
-              name="date"
-              value={newAppointment.date}
-              onChange={handleNewAppointmentChange}
-              required
-            />
-          </label>
-          <label>
-            Time:
-            <input
-              type="time"
-              name="time"
-              value={newAppointment.time}
-              onChange={handleNewAppointmentChange}
-              required
-            />
-          </label>
-          <label>
-            Type:
-            <input
-              type="text"
-              name="type"
-              value={newAppointment.type}
-              onChange={handleNewAppointmentChange}
-              required
-            />
-          </label>
-          <button type="submit">Add Appointment</button>
+          <VStack spacing="4" width="full">
+            <FormControl isRequired>
+              <FormLabel color="blue.700">Date</FormLabel>
+              <Input
+                type="date"
+                name="date"
+                value={newAppointment.date}
+                onChange={handleNewAppointmentChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel color="blue.700">Time</FormLabel>
+              <Input
+                type="time"
+                name="time"
+                value={newAppointment.time}
+                onChange={handleNewAppointmentChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel color="blue.700">Type</FormLabel>
+              <Input
+                type="text"
+                name="type"
+                value={newAppointment.type}
+                onChange={handleNewAppointmentChange}
+              />
+            </FormControl>
+            <Button type="submit" colorScheme="blue" width="full">Add Appointment</Button>
+          </VStack>
         </form>
-      </div>
+      </Box>
 
-      {isEditing ? (
-        <div>
-          <button onClick={handleSaveChanges}>Save Changes</button>
-          <button onClick={handleCancelEdit}>Cancel</button>
-        </div>
-      ) : (
-        <button onClick={handleEditClick}>Edit</button>
-      )}
-    </div>
+      <HStack mt="6" spacing="4" width="full">
+        {isEditing ? (
+          <>
+            <Button colorScheme="blue" onClick={handleSaveChanges}>Save Changes</Button>
+            <Button colorScheme="gray" onClick={handleCancelEdit}>Cancel</Button>
+          </>
+        ) : (
+          <Button colorScheme="blue" onClick={handleEditClick}>Edit</Button>
+        )}
+      </HStack>
+    </Box>
   );
 };
 
