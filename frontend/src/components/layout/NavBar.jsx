@@ -77,13 +77,15 @@ const NavBar = () => {
               {userRole === "admin" && (
                 <>
                   <NavLink to="/dashboard">Dashboard</NavLink>
+                  <NavLink to="/add-patient">Add Patient</NavLink>
+                  <NavLink to="/patients">Manage Patients</NavLink>
                   <NavLink to="/profile">Profile</NavLink>
                   <NavLink to="/settings">Settings</NavLink>
                 </>
               )}
               {userRole === "transporter" && (
                 <>
-                  <NavLink to="/transporter-dashboard">Patient Transport Dashboard</NavLink>
+                  <NavLink to="/transporter-dashboard">Transporter Dashboard</NavLink>
                   <NavLink to="/profile">Profile</NavLink>
                   <NavLink to="/settings">Settings</NavLink>
                 </>

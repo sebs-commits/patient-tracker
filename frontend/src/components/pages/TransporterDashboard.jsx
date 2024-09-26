@@ -7,15 +7,25 @@ import {
   completeRequest,
   getAssignedAppointment,
 } from "../../api/transporter";
-import Button from "../common/Button";
+import {
+  Box,
+  Heading,
+  Text,
+  Button,
+  VStack,
+  HStack,
+  Spinner,
+  useColorModeValue,
+} from "@chakra-ui/react";
 
 const TransporterDashboard = () => {
   const [appointment, setAppointment] = useState(null);
-  const [, setRequest] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loadingComplete, setLoadingComplete] = useState(false);
-  const [, setError] = useState(null);
   const [pendingRequests, setPendingRequests] = useState([]);
+
+  const bgColor = useColorModeValue("blue.50", "blue.900");
+  const textColor = useColorModeValue("blue.700", "blue.100");
 
   const fetchAssignedAppointment = async () => {
     try {
@@ -29,6 +39,7 @@ const TransporterDashboard = () => {
       }
     } catch (err) {
       console.error("Error fetching assigned appointment:", err);
+      toast.error("Unable to fetch assigned appointment. Please try again later.");
     }
   };
 
@@ -43,9 +54,7 @@ const TransporterDashboard = () => {
         }
       } catch (err) {
         console.error("Error checking pending requests:", err);
-        toast.error(
-          "Unable to fetch pending requests. Please try again later."
-        );
+        toast.error("Unable to fetch pending requests. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -62,8 +71,6 @@ const TransporterDashboard = () => {
 
   const handleAssignAppointment = async () => {
     setLoading(true);
-    setError(null);
-
     try {
       const response = await assignAppointment();
       if (response) {
@@ -85,11 +92,8 @@ const TransporterDashboard = () => {
 
   const handleCompleteAppointment = async () => {
     setLoadingComplete(true);
-    setError(null);
-
     try {
-      const response = await completeRequest();
-      setRequest(response);
+      await completeRequest();
       setAppointment(null);
       localStorage.removeItem("appointment");
       toast.success("Transporter has completed the request successfully.");
@@ -102,37 +106,44 @@ const TransporterDashboard = () => {
   };
 
   return (
-    <div>
-      <h2>Patient Transporter Dashboard</h2>
-      {loading && <p>Loading...</p>}
-      {!loading && pendingRequests.length > 0 && !appointment && (
-        <Button onClick={handleAssignAppointment}>
-          Assign Earliest Appointment
-        </Button>
-      )}
-      {appointment && appointment.patientId && (
-        <div>
-          <h3>Appointment Assigned:</h3>
-          <p>
-            <strong>Patient Name:</strong> {appointment.patientId.name}
-          </p>
-          <p>
-            <strong>Pickup Location:</strong> {appointment.patientId.unit}, Room{" "}
-            {appointment.patientId.room}
-          </p>
-          <p>
-            <strong>Drop-off Location:</strong> {appointment.appointmentDetails.type}
-          </p>
-          <p>
-            <strong>Status:</strong> {appointment.appointmentDetails.status}
-          </p>
-          <Button onClick={handleCompleteAppointment} disabled={loadingComplete}>
-            {loadingComplete ? "Completing..." : "Complete Request"}
-          </Button>
-        </div>
-      )}
+    <Box p="6" maxW="4xl" mx="auto" mt="10" borderWidth="1px" borderRadius="lg" boxShadow="lg" bg={bgColor}>
+      <Heading as="h2" size="lg" mb="6" color={textColor}>Patient Transporter Dashboard</Heading>
+      <VStack spacing="4" align="stretch">
+        {loading ? (
+          <HStack justify="center">
+            <Spinner />
+            <Text>Loading...</Text>
+          </HStack>
+        ) : (
+          <>
+            {!appointment && pendingRequests.length > 0 && (
+              <Button onClick={handleAssignAppointment} colorScheme="blue">
+                Assign Earliest Appointment
+              </Button>
+            )}
+            {appointment && appointment.patientId && (
+              <Box borderWidth="1px" borderRadius="md" p="4">
+                <Heading as="h3" size="md" mb="2">Appointment Assigned:</Heading>
+                <Text><strong>Patient Name:</strong> {appointment.patientId.name}</Text>
+                <Text><strong>Pickup Location:</strong> {appointment.patientId.unit}, Room {appointment.patientId.room}</Text>
+                <Text><strong>Drop-off Location:</strong> {appointment.appointmentDetails.type}</Text>
+                <Text><strong>Status:</strong> {appointment.appointmentDetails.status}</Text>
+                <Button 
+                  onClick={handleCompleteAppointment} 
+                  isLoading={loadingComplete}
+                  loadingText="Completing..."
+                  colorScheme="green" 
+                  mt="4"
+                >
+                  Complete Request
+                </Button>
+              </Box>
+            )}
+          </>
+        )}
+      </VStack>
       <ToastContainer />
-    </div>
+    </Box>
   );
 };
 

@@ -9,6 +9,8 @@ import Register from "./components/pages/Register";
 import AddPatients from "./components/pages/AddPatients";
 import PatientList from "./components/pages/PatientList";
 import PatientDetail from "./components/pages/PatientDetail";
+//import Profile from "./components/pages/Profile";
+//import Settings from "./components/pages/Settings";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -30,6 +32,8 @@ function App() {
           <Route path="/add-patient" element={<AddPatients />} />
           <Route path="/patients" element={<PatientList />} />
           <Route path="/patients/:id" element={<PatientDetail />} />
+          {/* <Route path="/profile" element={<Profile />} /> */}
+          {/* <Route path="/settings" element={<Settings />} /> */}
           <Route path="/" element={<Dashboard />} />
         </Routes>
       </Router>
