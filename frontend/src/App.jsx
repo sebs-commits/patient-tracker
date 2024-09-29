@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import { ChakraProvider } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import NavBar from "./components/layout/NavBar";
@@ -27,14 +27,14 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/transporter-dashboard" element={<TransporterDashboard />} />
-          <Route path="/add-patient" element={<AddPatients />} />
-          <Route path="/patients" element={<PatientList />} />
-          <Route path="/patients/:id" element={<PatientDetail />} />
+          <Route path="/dashboard" element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />} />
+          <Route path="/transporter-dashboard" element={isLoggedIn ? <TransporterDashboard /> : <Navigate to="/login" />} />
+          <Route path="/add-patient" element={isLoggedIn ? <AddPatients /> : <Navigate to="/login" />} />
+          <Route path="/patients" element={isLoggedIn ? <PatientList /> : <Navigate to="/login" />} />
+          <Route path="/patients/:id" element={isLoggedIn ? <PatientDetail /> : <Navigate to="/login" />} />
           {/* <Route path="/profile" element={<Profile />} /> */}
           {/* <Route path="/settings" element={<Settings />} /> */}
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<Navigate to="/login" />} />
         </Routes>
       </Router>
     </ChakraProvider>
