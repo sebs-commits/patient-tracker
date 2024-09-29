@@ -1,4 +1,4 @@
-# Project Name
+# Hospital Patient Tracking System
 
 This is a personal project inspired by my work as a patient transporter at a local hospital. It's a web application designed for hospital or healthcare organizations, focusing on replicating the workflow
 of patient transportation. Admin users can submit patient transport requests, which are then assigned to available transporters for completion.
