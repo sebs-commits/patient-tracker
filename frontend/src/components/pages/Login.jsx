@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../../api/auth";
-import { Box, Button, FormControl, FormLabel, Input, Heading, Text, Flex, VStack } from "@chakra-ui/react";
+import { Box, Button, FormControl, FormLabel, Input, Heading, Text, Flex, VStack, HStack } from "@chakra-ui/react";
 
 const Login = ({ setIsLoggedIn }) => {
   const [username, setUsername] = useState("");
@@ -9,6 +9,7 @@ const Login = ({ setIsLoggedIn }) => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // Function to handle login
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -17,7 +18,18 @@ const Login = ({ setIsLoggedIn }) => {
       setIsLoggedIn(true); // Update the login status
       navigate("/dashboard");
     } catch (err) {
-      setError("Invalid credentials. Please try again.", err);
+      setError("Invalid credentials. Please try again.");
+    }
+  };
+
+  // Function to handle demo login
+  const handleDemoLogin = (userType) => {
+    if (userType === "admin") {
+      setUsername("adminuser"); 
+      setPassword("password123");  
+    } else if (userType === "transporter") {
+      setUsername("transporter"); 
+      setPassword("password123");  
     }
   };
 
@@ -64,6 +76,22 @@ const Login = ({ setIsLoggedIn }) => {
             </FormControl>
             {error && <Text color="red.500">{error}</Text>}
             <Button type="submit" colorScheme="blue" width="full">Login</Button>
+            <HStack spacing="4" width="full" mt="4"> 
+              <Button 
+                onClick={() => handleDemoLogin("admin")} 
+                colorScheme="teal" 
+                width="full"
+              >
+                Demo Login as Admin
+              </Button>
+              <Button 
+                onClick={() => handleDemoLogin("transporter")} 
+                colorScheme="teal" 
+                width="full"
+              >
+                Demo Login as Transporter
+              </Button>
+            </HStack>
           </VStack>
         </form>
       </Box>
