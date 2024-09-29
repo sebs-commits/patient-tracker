@@ -5,6 +5,12 @@ of patient transportation. Admin users can submit patient transport requests, wh
 
 ---
 
+## Disclaimer
+
+All names and data used within this project are fictional. They are for demonstration purposes only and do not represent real individuals or entities. Any resemblance to actual persons, living or dead, or actual events is purely coincidental.
+
+---
+
 ## Table of Contents
 
 - Overview
