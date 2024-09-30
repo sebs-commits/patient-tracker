@@ -5,7 +5,38 @@ import {
   updatePatient,
   addAppointment,
 } from "../../api/patients";
-import { Box, Button, FormControl, FormLabel, Input, Heading, VStack, Text, HStack, Grid, GridItem } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  Select,
+  Heading,
+  VStack,
+  Text,
+  HStack,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  IconButton,
+} from "@chakra-ui/react";
+import { DeleteIcon } from "@chakra-ui/icons";
+
+// Predefined list of appointment types
+const APPOINTMENT_TYPES = [
+  "X-Ray",
+  "CT Scan",
+  "MRI",
+  "Blood Test",
+  "Physical Therapy",
+  "Cardiology Consultation",
+  "Neurology Consultation",
+  "Orthopedic Consultation",
+];
 
 const PatientDetail = () => {
   const { id } = useParams();
@@ -20,7 +51,7 @@ const PatientDetail = () => {
   const [newAppointment, setNewAppointment] = useState({
     date: "",
     time: "",
-    type: "",
+    type: APPOINTMENT_TYPES[0], // Set default to first appointment type
   });
 
   useEffect(() => {
@@ -94,7 +125,7 @@ const PatientDetail = () => {
       const updatedPatient = await addAppointment(id, newAppointment);
       setPatient(updatedPatient);
       setEditablePatient(updatedPatient);
-      setNewAppointment({ date: "", time: "", type: "" }); // Reset the form
+      setNewAppointment({ date: "", time: "", type: APPOINTMENT_TYPES[0] }); // Reset the form
     } catch (error) {
       console.error("Error adding appointment:", error);
     }
@@ -151,46 +182,74 @@ const PatientDetail = () => {
       </VStack>
 
       <Heading as="h3" size="md" mt="6" mb="4" color="blue.700">Appointments</Heading>
-      <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={4} width="full">
-        {editablePatient.appointments.map((appt, index) => (
-          <GridItem key={index} p="4" borderWidth="1px" borderRadius="lg" bg="white" width="full">
-            {isEditing ? (
-              <VStack spacing="2" width="full">
-                <FormControl>
-                  <FormLabel color="blue.700">Type</FormLabel>
-                  <Input
-                    type="text"
+      <Table variant="simple" bg="white" borderRadius="md" overflow="hidden">
+        <Thead>
+          <Tr>
+            <Th>Type</Th>
+            <Th>Date</Th>
+            <Th>Time</Th>
+            {isEditing && <Th>Actions</Th>}
+          </Tr>
+        </Thead>
+        <Tbody>
+          {editablePatient.appointments.map((appt, index) => (
+            <Tr key={index}>
+              <Td>
+                {isEditing ? (
+                  <Select
                     name="type"
                     value={appt.type}
                     onChange={(e) => handleAppointmentChange(index, e)}
-                  />
-                </FormControl>
-                <FormControl>
-                  <FormLabel color="blue.700">Date</FormLabel>
+                  >
+                    {APPOINTMENT_TYPES.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </Select>
+                ) : (
+                  appt.type
+                )}
+              </Td>
+              <Td>
+                {isEditing ? (
                   <Input
                     type="date"
                     name="date"
-                    value={appt.date.split("T")[0]} // Handle date format
+                    value={appt.date.split("T")[0]}
                     onChange={(e) => handleAppointmentChange(index, e)}
                   />
-                </FormControl>
-                <FormControl>
-                  <FormLabel color="blue.700">Time</FormLabel>
+                ) : (
+                  new Date(appt.date).toLocaleDateString()
+                )}
+              </Td>
+              <Td>
+                {isEditing ? (
                   <Input
                     type="time"
                     name="time"
                     value={appt.time}
                     onChange={(e) => handleAppointmentChange(index, e)}
                   />
-                </FormControl>
-                <Button colorScheme="red" onClick={() => handleRemoveAppointment(index)}>Remove</Button>
-              </VStack>
-            ) : (
-              <Text>{appt.type} on {new Date(appt.date).toLocaleDateString()} at {appt.time}</Text>
-            )}
-          </GridItem>
-        ))}
-      </Grid>
+                ) : (
+                  appt.time
+                )}
+              </Td>
+              {isEditing && (
+                <Td>
+                  <IconButton
+                    aria-label="Remove appointment"
+                    icon={<DeleteIcon />}
+                    onClick={() => handleRemoveAppointment(index)}
+                    colorScheme="red"
+                    size="sm"
+                  />
+                </Td>
+              )}
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
 
       <Box mt="6" width="full">
         <Heading as="h3" size="md" mb="4" color="blue.700">Add Appointment</Heading>
@@ -216,12 +275,17 @@ const PatientDetail = () => {
             </FormControl>
             <FormControl isRequired>
               <FormLabel color="blue.700">Type</FormLabel>
-              <Input
-                type="text"
+              <Select
                 name="type"
                 value={newAppointment.type}
                 onChange={handleNewAppointmentChange}
-              />
+              >
+                {APPOINTMENT_TYPES.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </Select>
             </FormControl>
             <Button type="submit" colorScheme="blue" width="full">Add Appointment</Button>
           </VStack>
